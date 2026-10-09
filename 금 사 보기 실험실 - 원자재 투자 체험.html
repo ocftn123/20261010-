@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>금 사 보기 실험실 - 원자재 투자 체험</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#eef3f6;--card:#fff;--ink:#12303f;--sub:#5a7280;--gold:#f2b705;--gold2:#fff3c4;--cost:#e4572e;--cost2:#fde3db;--ok:#1f9a66;--ok2:#d9f3e6;--line:#cfdbe2;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1d26;--card:#17303d;--ink:#eaf2f6;--sub:#9db3bf;--gold2:#4a3d0a;--cost2:#4a2518;--ok2:#14402e;--line:#2c4856}}
+:root[data-theme="dark"]{--bg:#0e1d26;--card:#17303d;--ink:#eaf2f6;--sub:#9db3bf;--gold2:#4a3d0a;--cost2:#4a2518;--ok2:#14402e;--line:#2c4856}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Noto Sans KR",system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1,h2{font-family:"Jua","Noto Sans KR",sans-serif;font-weight:400;margin:0}
+h1{font-size:2rem;line-height:1.25}
+h2{font-size:1.4rem;margin-bottom:6px}
+p{margin:6px 0}
+.lead{color:var(--sub)}
+nav{display:flex;gap:6px;margin:18px 0;overflow-x:auto}
+nav button{flex:1 0 auto;font:inherit;font-weight:500;padding:10px 14px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--gold);border-color:var(--gold);color:#12303f}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+section{display:none;background:var(--card);border-radius:18px;padding:20px;border:1px solid var(--line)}
+section.on{display:block}
+.btn{font:inherit;font-weight:700;padding:10px 16px;border:0;border-radius:10px;background:var(--ink);color:var(--bg);cursor:pointer;margin:4px 6px 4px 0}
+.btn.gold{background:var(--gold);color:#12303f}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+.tile{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px;font:inherit;text-align:left;cursor:pointer}
+.tile .e{font-size:2rem;display:block}
+.tile[aria-pressed="true"]{border-color:var(--gold);background:var(--gold2)}
+.box{border-radius:12px;padding:12px 14px;margin:10px 0;background:var(--gold2)}
+.box.cost{background:var(--cost2)}.box.ok{background:var(--ok2)}
+.row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.row:last-child{border:0}
+.big{font-family:"Jua",sans-serif;font-size:1.6rem}
+.neg{color:var(--cost)}.pos{color:var(--ok)}
+.bar{font-size:2.6rem;letter-spacing:4px;min-height:3.4rem}
+input[type=range]{width:100%;accent-color:var(--gold)}
+table{width:100%;border-collapse:collapse;margin:8px 0}
+td,th{padding:8px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+.q button{display:block;width:100%;text-align:left;font:inherit;padding:10px 12px;margin:6px 0;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}
+.q button.right{border-color:var(--ok);background:var(--ok2)}
+.q button.wrong{border-color:var(--cost);background:var(--cost2)}
+.small{font-size:.9rem;color:var(--sub)}
+</style>
+</head>
+<body>
+<main>
+<h1>금을 사 볼까?<br>원자재 투자 실험실</h1>
+<p class="lead">버튼을 눌러 가며 직접 해 보세요. 실제 돈이 아니라 연습이에요.</p>
+<nav role="tablist" id="tabs">
+<button role="tab" aria-selected="true" data-t="0">1 원자재란?</button>
+<button role="tab" aria-selected="false" data-t="1">2 금 직접 사기</button>
+<button role="tab" aria-selected="false" data-t="2">3 선물로 사기</button>
+<button role="tab" aria-selected="false" data-t="3">4 비교·퀴즈</button>
+</nav>
+
+<section id="s0" class="on">
+<h2>원자재(commodity)가 뭘까?</h2>
+<p>물건을 만드는 재료가 되는 기본 상품이에요. 같은 종류면 품질이 거의 같아서 서로 바꿔도 돼요. 카드를 눌러 보세요.</p>
+<div class="grid" id="cards"></div>
+<div class="box" id="cardInfo">카드를 눌러 보세요.</div>
+<p>원자재에 투자한다는 건, 이런 물건의 <b>가격이 오르고 내리는 것</b>에서 이익이나 손해를 보는 거예요.</p>
+<button class="btn gold" data-go="1">다음: 금을 직접 사 보기</button>
+</section>
+
+<section id="s1">
+<h2>직접 사기 (direct approach)</h2>
+<p>진짜 금 1개를 사서 집에 두고 가격이 오르길 기다려요. 금 1개는 100만 원이에요.</p>
+<div class="bar" id="goldBar" aria-live="polite">🪙</div>
+<button class="btn gold" id="buy">금 1개 사기</button>
+<button class="btn" id="check" disabled>품질 검사하기</button>
+<button class="btn" id="month" disabled>한 달 보내기</button>
+<button class="btn" id="reset1">처음부터</button>
+<div class="box" id="msg1">먼저 금을 사 보세요.</div>
+<div class="row"><span>지금 금 시세 (1개)</span><b id="price">100만 원</b></div>
+<div class="row"><span>지난 시간</span><b id="months">0개월</b></div>
+<div class="box cost">
+<div class="row"><span>🏦 보관비 (금고 사용료)</span><b id="c1">0</b></div>
+<div class="row"><span>🛡️ 보험료 (도난·화재 대비)</span><b id="c2">0</b></div>
+<div class="row"><span>💸 기회비용 (은행에 뒀으면 받았을 이자)</span><b id="c3">0</b></div>
+</div>
+<div class="row"><span>시세 변화로 번 돈</span><b id="gain">0</b></div>
+<div class="row"><span>비용을 빼고 남은 돈</span><b class="big" id="net1">0</b></div>
+<p class="small">검사에서 순도가 낮게 나오면 같은 금이라도 값이 덜 쳐져요. 이게 지문의 "품질 문제"예요.</p>
+<button class="btn gold" data-go="2">다음: 선물로 사 보기</button>
+</section>
+
+<section id="s2">
+<h2>선물(futures)로 사기: 간접투자 (indirect approach)</h2>
+<p>선물은 어려운 말 같지만, 여러분이 해 본 <b>"예약"</b>과 닮았어요. 먼저 일상 속 예시를 눌러 보세요.</p>
+<div class="grid" id="exTabs"></div>
+<div class="box" id="exBox">예시를 하나 골라 보세요.</div>
+<div id="exBtns" hidden>
+<p><b>3개월 뒤, 가격이 어떻게 됐을까요?</b></p>
+<button class="btn gold" data-ex="up">가격이 올랐어요 📈</button>
+<button class="btn" data-ex="down">가격이 내렸어요 📉</button>
+<div class="box ok" id="exRes"></div>
+</div>
+<div class="box">
+<b>두 예시의 공통점 (선물의 3단계)</b>
+<div class="row"><span>① 지금</span><b>미래에 거래할 가격을 미리 정해요</b></div>
+<div class="row"><span>② 시간이 지나요</span><b>실제 가격이 달라져요</b></div>
+<div class="row"><span>③ 마지막에</span><b>약속한 가격과의 차이를 정산해요</b></div>
+</div>
+<h2 style="margin-top:20px">이제 금으로 해 볼까요?</h2>
+<p><b>선물</b>은 "3개월 뒤에 금 1개를 <b>지금 정한 가격 100만 원</b>에 사겠다"는 약속(계약)이에요. 금을 직접 받지 않고, 약속한 가격과 실제 가격의 <b>차이만</b> 주고받아요.</p>
+<button class="btn gold" id="sign">약속하기 (계약금 10만 원)</button>
+<div class="box" id="msg2">먼저 약속을 해 보세요.</div>
+<div id="fut" hidden>
+<p>3개월 뒤 실제 금 시세를 정해 보세요. 슬라이더를 움직여요.</p>
+<input type="range" id="fp" min="70" max="130" value="100" aria-label="3개월 뒤 금 시세">
+<div class="row"><span>3개월 뒤 금 시세</span><b id="fpv">100만 원</b></div>
+<div class="row"><span>약속한 가격</span><b>100만 원</b></div>
+<div class="row"><span>보관비·보험료</span><b>0원 (금이 집에 없어요)</b></div>
+<div class="row"><span>정산 결과 (차액)</span><b class="big" id="fres">0</b></div>
+<div class="box ok" id="fnote">시세가 약속한 가격보다 오르면 이득이에요.</div>
+</div>
+<p class="small">주의: 시세가 떨어지면 손해도 그대로 봐요. 가격 변화에 노출되는 정도는 직접투자와 같아요.</p>
+<button class="btn gold" data-go="3">다음: 둘을 비교하기</button>
+</section>
+
+<section id="s3">
+<h2>직접 vs 간접, 뭐가 다를까?</h2>
+<p>3개월 동안 금 시세가 아래처럼 바뀌었다고 해 볼게요.</p>
+<input type="range" id="cp" min="70" max="130" value="110" aria-label="3개월 뒤 금 시세">
+<div class="row"><span>3개월 뒤 금 시세</span><b id="cpv">110만 원</b></div>
+<table>
+<tr><th></th><th>직접투자</th><th>선물(간접)</th></tr>
+<tr><td>시세 차익</td><td id="t1"></td><td id="t2"></td></tr>
+<tr><td>보관비+보험료+기회비용</td><td id="t3"></td><td>0</td></tr>
+<tr><td>품질 걱정</td><td>있음</td><td>없음</td></tr>
+<tr><td><b>최종 결과</b></td><td id="t4"></td><td id="t5"></td></tr>
+</table>
+<div class="box">시세가 같아도 직접투자는 관리 비용 때문에 결과가 더 낮아요. 그래서 투자자들은 간접투자를 선호하는 편이에요. 이게 지문의 결론이에요.</div>
+<h2 style="margin-top:20px">확인 퀴즈</h2>
+<div id="quiz"></div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const won=n=>(n>0?'+':'')+(Math.round(n*10)/10)+'만 원';
+const cls=(el,n)=>{el.className=(el.classList.contains('big')?'big ':'')+(n>0?'pos':n<0?'neg':'')};
+function go(i){document.querySelectorAll('section').forEach((s,k)=>s.classList.toggle('on',k===i));document.querySelectorAll('#tabs button').forEach((b,k)=>b.setAttribute('aria-selected',k===i));window.scrollTo({top:0,behavior:'smooth'})}
+$('tabs').onclick=e=>{if(e.target.dataset.t)go(+e.target.dataset.t)};
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
+
+// 1 원자재 카드
+const items=[['🪙','금','반지, 휴대폰 부품에 써요. 불안할 때 사람들이 많이 찾아요.'],['🛢️','원유','자동차 기름과 플라스틱의 원료예요.'],['🌾','밀','빵과 라면의 재료예요. 날씨에 따라 가격이 크게 움직여요.'],['🔶','구리','전선과 전자제품에 꼭 필요해요.']];
+items.forEach((it,i)=>{const b=document.createElement('button');b.className='tile';b.setAttribute('aria-pressed','false');b.innerHTML=`<span class="e">${it[0]}</span><b>${it[1]}</b>`;
+b.onclick=()=>{document.querySelectorAll('#cards .tile').forEach(t=>t.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');$('cardInfo').textContent=it[1]+': '+it[2]+' 어느 가게에서 사도 같은 품질이라 서로 바꿔 쓸 수 있어요.'};$('cards').appendChild(b)});
+
+// 2 직접투자
+let own,pur,pr,mo,costs,checked;
+function init1(){own=false;pr=100;mo=0;costs=[0,0,0];checked=false;pur=Math.random()<.35?.8:1;
+$('goldBar').textContent='🪙';$('buy').disabled=false;$('check').disabled=true;$('month').disabled=true;
+$('msg1').textContent='먼저 금을 사 보세요.';upd1()}
+function val(){return pr*(checked?pur:1)}
+function upd1(){$('price').textContent=Math.round(pr*10)/10+'만 원';$('months').textContent=mo+'개월';
+['c1','c2','c3'].forEach((id,i)=>$(id).textContent=own?'-'+Math.round(costs[i]*10)/10+'만 원':'0');
+const g=own?val()-100:0,c=costs[0]+costs[1]+costs[2],n=own?g-c:0;
+$('gain').textContent=own?won(g):'0';$('net1').textContent=own?won(n):'0';cls($('net1'),n);cls($('gain'),g)}
+$('buy').onclick=()=>{own=true;$('goldBar').textContent='🪙🪙🪙';$('buy').disabled=true;$('check').disabled=false;$('month').disabled=false;
+$('msg1').textContent='금을 샀어요! 이제 금고에 보관해야 해요. "한 달 보내기"를 눌러 보세요.';upd1()};
+$('month').onclick=()=>{mo++;pr=Math.max(70,Math.min(130,pr+(Math.random()*12-5.5)));costs[0]+=1;costs[1]+=1;costs[2]+=.5;
+$('msg1').textContent='한 달이 지났어요. 시세는 움직였고, 비용은 어김없이 나갔어요.';upd1()};
+$('check').onclick=()=>{checked=true;$('check').disabled=true;
+$('msg1').textContent=pur<1?'순도가 80%밖에 안 돼요! 품질이 낮으면 같은 금이라도 값이 20% 덜 쳐져요.':'순도가 높아요. 이번엔 운이 좋았어요. 다시 해 보면 품질이 낮은 금을 만날 수도 있어요.';upd1()};
+$('reset1').onclick=init1;init1();
+
+// 3-0 선물 예시
+const ex=[{e:'👟',t:'한정판 운동화 예약',s:'3개월 뒤 발매되는 운동화가 있어요. 지금 <b>10만 원에 사기로 예약</b>했어요. 이 10만 원이 "약속한 가격"이에요.',up:'인기가 폭발해서 중고 시세가 15만 원이 됐어요! 10만 원에 사기로 했으니 <b>5만 원 이득</b>이에요. 신발을 받지 않고 차액만 받아도 똑같아요.',down:'인기가 시들해져 시세가 7만 원이 됐어요. 그래도 10만 원에 사기로 약속했으니 <b>3만 원 손해</b>예요.'},
+{e:'🌾',t:'농부와 빵집',s:'농부는 밀 값이 떨어질까 걱정이고, 빵집은 오를까 걱정이에요. 그래서 둘은 <b>3개월 뒤 밀 한 포대를 10만 원에 거래하기로 미리 약속</b>했어요. 이게 선물의 원래 모습이에요.',up:'시세가 15만 원이 됐어요. 빵집은 싸게 사서 <b>5만 원 이득</b>이에요. 농부는 아쉽지만 처음부터 가격이 확정돼 있어 마음은 편했어요.',down:'시세가 7만 원이 됐어요. 농부가 <b>3만 원 이득</b>이에요. 빵집은 더 비싸게 사는 셈이지만, 가격이 오를 걱정은 없었어요.'}];
+let exI=-1;
+ex.forEach((x,i)=>{const b=document.createElement('button');b.className='tile';b.setAttribute('aria-pressed','false');b.innerHTML=`<span class="e">${x.e}</span><b>${x.t}</b>`;
+b.onclick=()=>{exI=i;document.querySelectorAll('#exTabs .tile').forEach(t=>t.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');$('exBox').innerHTML=x.s;$('exBtns').hidden=false;$('exRes').textContent='위 버튼을 눌러 결과를 확인해 보세요.'};$('exTabs').appendChild(b)});
+document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{if(exI>=0)$('exRes').innerHTML=ex[exI][b.dataset.ex]});
+
+// 3 선물
+$('sign').onclick=()=>{$('fut').hidden=false;$('sign').disabled=true;$('msg2').textContent='약속 완료! 금은 사지 않았어요. 창고도 보험도 필요 없어요.';updF()};
+function updF(){const p=+$('fp').value,r=p-100;$('fpv').textContent=p+'만 원';$('fres').textContent=won(r);cls($('fres'),r);
+$('fnote').textContent=r>0?'약속한 가격보다 시세가 올라서 차액만큼 이득이에요.':r<0?'약속한 가격보다 시세가 내려서 차액만큼 손해예요. 가격 변화에 그대로 노출되죠.':'시세가 그대로라 손익이 없어요.'}
+$('fp').oninput=updF;
+
+// 4 비교
+function updC(){const p=+$('cp').value,g=p-100,c=7.5;$('cpv').textContent=p+'만 원';
+$('t1').textContent=won(g);$('t2').textContent=won(g);$('t3').textContent='-'+c+'만 원';
+$('t4').textContent=won(g-c);$('t5').textContent=won(g);cls($('t4'),g-c);cls($('t5'),g)}
+$('cp').oninput=updC;updC();
+const qs=[['금을 직접 사면 생기는 비용이 아닌 것은?',['보관비','보험료','선물 계약의 차액 정산'],2],['선물을 사는 건 어떤 약속일까?',['나중에 정해 둔 가격으로 사겠다는 약속','금을 지금 전부 받는 약속','가격이 안 변한다는 약속'],0],['투자자들이 간접투자를 선호하는 이유는?',['실물 관리의 부담이 적어서','가격이 반드시 올라서','품질이 항상 좋아져서'],0]];
+qs.forEach((q,i)=>{const d=document.createElement('div');d.className='q';d.innerHTML=`<p><b>Q${i+1}. ${q[0]}</b></p>`;
+q[1].forEach((t,k)=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{b.classList.add(k===q[2]?'right':'wrong');if(k!==q[2])d.children[q[2]+1].classList.add('right')};d.appendChild(b)});$('quiz').appendChild(d)});
+</script>
+</body>
+</html>
